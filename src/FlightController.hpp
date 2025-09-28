@@ -6,6 +6,7 @@
 #define FLIGHTCONTROLLER_HPP
 #include "algo/Pid.hpp"
 #include "algo/KalmanFilter.hpp"
+#include "algo/KalmanFilter2D.hpp"
 #include "hardware/Rate.hpp"
 #include "hardware/receiver/ElrsReceiver.hpp"
 #include "hardware/motor/MotorManager.hpp"
@@ -28,12 +29,14 @@ public:
 private:
 	KalmanFilter m_kalmanFilterRoll;
 	KalmanFilter m_kalmanFilterPitch;
+	KalmanFilter2d m_kamlanFilterVerticalVelAlt;
 
 	PID m_pidAngleRoll = PID({2,0,0});
 	PID m_pidAnglePitch = PID({2,0,0});
-	PID m_pidRatePitch = PID({0.45,3.5,0.025});
-	PID m_pidRateRoll = PID({0.45,3.5,0.025});
+	PID m_pidRatePitch = PID({0.40,3.5,0.025});
+	PID m_pidRateRoll = PID({0.40,3.5,0.025});
 	PID m_pidRateYaw = PID({2,12,0});
+	PID m_pidVerticalVelocity = PID({3.5,0.0015,0.01});
 
 	ElrsReceiver			m_receiver;
 	motor::MotorManager		m_motorMgr;

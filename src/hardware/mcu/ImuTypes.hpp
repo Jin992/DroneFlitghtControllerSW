@@ -55,13 +55,21 @@ namespace imu {
 	};
 
 	typedef struct {
+		float velocity;
+		float accZInertial;
+	} AccelVerticalVelocityData;
+
+	typedef struct {
 		float angleRoll;
 		float anglePitch;
+		AccelVerticalVelocityData verticalVelocity;
 	} AccelData;
 
 	typedef struct {
 		GyroData gyro;
 		AccelData accel;
+		float altitudeCm;
+		float groundAltitude;
 	} ImuData;
 
 }

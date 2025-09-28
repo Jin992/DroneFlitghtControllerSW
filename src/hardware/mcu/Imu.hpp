@@ -7,6 +7,7 @@
 #include "Accel.hpp"
 #include "ImuTypes.hpp"
 #include "Gyro.hpp"
+#include "Baro.hpp"
 namespace imu {
 
 class Imu {
@@ -19,6 +20,7 @@ public:
 private:
 	Gyro m_gyro;
 	Accel m_accel;
+	Baro m_baro;
 };
 
 } // imu

@@ -67,9 +67,7 @@ namespace imu {
 		m_wire.write(0x6B);
 		m_wire.write(0x00);
 		m_wire.endTransmission();
-	}
 
-	GyroData Gyro::m_pollGyro() {
 		m_wire.beginTransmission(0x68);
 		m_wire.write(0x1A);
 		m_wire.write(0x05);
@@ -79,15 +77,17 @@ namespace imu {
 		m_wire.write(0x1B);
 		m_wire.write(0x8);
 		m_wire.endTransmission();
+	}
 
+	GyroData Gyro::m_pollGyro() {
 		m_wire.beginTransmission(0x68);
 		m_wire.write(0x43);
 		m_wire.endTransmission();
 
 		m_wire.requestFrom(0x68,6);
-		const int16_t GyroX=Wire.read()<<8 | Wire.read();
-		const int16_t GyroY=Wire.read()<<8 | Wire.read();
-		const int16_t GyroZ=Wire.read()<<8 | Wire.read();
+		int16_t GyroX=Wire.read()<<8 | Wire.read();
+		int16_t GyroY=Wire.read()<<8 | Wire.read();
+		int16_t GyroZ=Wire.read()<<8 | Wire.read();
 		const float angleConst = 65.5;
 		return {static_cast<float>(GyroX) / angleConst,
 			  static_cast<float>(GyroY) / angleConst,

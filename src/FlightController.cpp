@@ -22,6 +22,11 @@ namespace algo {
 
 	FCInput FlightController::calculateMotorThrust(imu::ImuData &imuData, ControlState &rcControlInput) {
 
+		// vertical velocity mode, experimentsl, not working now
+		//auto kalmanVerticalVelAltr = m_kamlanFilterVerticalVelAlt.calculate(imuData.altitudeCm, imuData.accel.verticalVelocity.accZInertial);
+		//const float errorVelocityVertical = 0.3 * (rcControlInput.throttle - 1500) - kalmanVerticalVelAltr.velocity;
+		//rcControlInput.throttle = m_pidVerticalVelocity.calculate(errorVelocityVertical) + 1500;
+
 		const float kalmanAngleRoll = m_kalmanFilterRoll.calculateAngle1d(imuData.gyro.roll, imuData.accel.angleRoll);
 		const float kalmanAnglePitch = m_kalmanFilterPitch.calculateAngle1d(imuData.gyro.pitch, imuData.accel.anglePitch);
 
@@ -58,8 +63,8 @@ namespace algo {
 
 		auto fcMotorInput = calculateMotorThrust(imuData, m_rcControlInput);
 		if (m_rcControlInput.arm == false) {
-			reset();
 			m_motorMgr.stopMotors();
+			reset();
 			Led::statusArm(false);
 		} else {
 			Led::statusArm(true);
@@ -67,7 +72,8 @@ namespace algo {
 		}
 
 		auto timeSpent = micros() - m_loopTimer;
-		while (timeSpent < 4000){};
+		//Serial.printf("Time spent %d\n", timeSpent);
+		while (timeSpent < 4000){}
 		m_loopTimer = micros();
 	}
 } // algo
