@@ -2,7 +2,7 @@
 // Created by Yevhen Arteshchuk on 04.08.2025.
 //
 
-#include "ElrsReceiver.hpp"
+#include "hardware/receiver/ElrsReceiver.hpp"
 
 #include <optional>
 #include <Wire.h>

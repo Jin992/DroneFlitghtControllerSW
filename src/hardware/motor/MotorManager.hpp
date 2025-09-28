@@ -5,7 +5,7 @@
 #ifndef MOTORMANAGER_HPP
 #define MOTORMANAGER_HPP
 #include <array>
-#include <Motor.hpp>
+#include <hardware/motor/Motor.hpp>
 
 namespace motor {
 

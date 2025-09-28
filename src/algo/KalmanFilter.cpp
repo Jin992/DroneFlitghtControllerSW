@@ -2,7 +2,7 @@
 // Created by Yevhen Arteshchuk on 27.09.2025.
 //
 
-#include "KalmanFilter.hpp"
+#include "algo/KalmanFilter.hpp"
 
 namespace algo {
 

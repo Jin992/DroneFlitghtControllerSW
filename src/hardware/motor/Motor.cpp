@@ -2,10 +2,10 @@
 // Created by Yevhen Arteshchuk on 04.09.2025.
 //
 
-#include "Motor.hpp"
+#include "hardware/motor/Motor.hpp"
 #include <core_pins.h>
 #include <Arduino.h>
-#include "Rate.hpp"
+#include "../Rate.hpp"
 
 Motor::Motor(int controlPin)
 	: m_controlPin(controlPin) {

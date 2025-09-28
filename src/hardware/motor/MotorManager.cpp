@@ -2,7 +2,7 @@
 // Created by Yevhen Arteshchuk on 27.09.2025.
 //
 
-#include "MotorManager.hpp"
+#include "hardware/motor/MotorManager.hpp"
 
 #include <core_pins.h>
 

@@ -4,12 +4,12 @@
 
 #ifndef FLIGHTCONTROLLER_HPP
 #define FLIGHTCONTROLLER_HPP
-#include "Pid.hpp"
-#include "KalmanFilter.hpp"
-#include "Rate.hpp"
-#include "ElrsReceiver.hpp"
-#include "MotorManager.hpp"
-#include "mcu/Imu.hpp"
+#include "algo/Pid.hpp"
+#include "algo/KalmanFilter.hpp"
+#include "hardware/Rate.hpp"
+#include "hardware/receiver/ElrsReceiver.hpp"
+#include "hardware/motor/MotorManager.hpp"
+#include "hardware/mcu/Imu.hpp"
 
 namespace algo {
 	typedef struct {

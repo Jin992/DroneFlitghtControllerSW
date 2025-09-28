@@ -9,7 +9,7 @@
 #include <optional>
 #include <vector>
 
-#include "Rate.hpp"
+#include "../Rate.hpp"
 
 #define CRSF_SIGNAL_OK          0x00
 #define CRSF_SIGNAL_LOST        0x01
