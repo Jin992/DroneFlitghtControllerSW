@@ -2,7 +2,7 @@
 // Created by Yevhen Arteshchuk on 04.08.2025.
 //
 
-#include "hardware/receiver/ElrsReceiver.hpp"
+#include "hardware/receiver/ElrsCRSFReceiver.hpp"
 
 #include <optional>
 #include <Wire.h>
@@ -83,7 +83,7 @@ uint8_t crc8_calc(const uint8_t *data, uint32_t lengthByte) {
 }
 
 
-ElrsReceiver::ElrsReceiver(HardwareSerialIMXRT &serial)
+ElrsCRSFReceiver::ElrsCRSFReceiver(HardwareSerialIMXRT &serial)
 	: m_serialRef(serial)
 	  , inBuffer{} {
 	m_serialRef.begin(420000);
@@ -122,7 +122,7 @@ void printCrsfPacket(std::array<uint8_t, 64> pkt) {
 	Serial.println("");
 }
 
-void ElrsReceiver::parseCrsfPacket(const uint8_t *buff, ElrsReceiverData &data) {
+void ElrsCRSFReceiver::parseCrsfPacket(const uint8_t *buff, ElrsReceiverData &data) {
 	uint8_t pktType = buff[2];
 	uint8_t payloadSize = buff[1] - 1;
 	const uint8_t *payloadStart = buff + 2;
@@ -149,7 +149,7 @@ void ElrsReceiver::parseCrsfPacket(const uint8_t *buff, ElrsReceiverData &data) 
 	}
 }
 
-std::optional<ElrsReceiverData> ElrsReceiver::poll(void) {
+std::optional<ElrsReceiverData> ElrsCRSFReceiver::poll(void) {
 	static uint8_t rxData = 0;
 	static int buffIdx = 0;
 	bool pktReady = false;
@@ -180,11 +180,16 @@ std::optional<ElrsReceiverData> ElrsReceiver::poll(void) {
 	return std::nullopt;
 }
 
-float normalize(int value, float old_min, float old_max, float new_min, float new_max) {
-	return new_min + (new_max - new_min) * ((value - old_min) / (old_max - old_min));
+void ElrsCRSFReceiver::send(const ElrsReceiverData &) {
+	// do nothing
 }
 
-ControlState ElrsReceiver::convertElrsReceiverDataToControlData(ElrsReceiverData &rawData) {
+namespace {
+	float normalize(int value, float old_min, float old_max, float new_min, float new_max) {
+		return new_min + (new_max - new_min) * ((value - old_min) / (old_max - old_min));
+	}
+}
+ControlState ElrsCRSFReceiver::convertElrsReceiverDataToControlData(ElrsReceiverData &rawData) {
 	ControlState state = {};
 	if (rawData.rcChannelsData[RC_CHNL_ARM] > 1000) {
 		state.arm = true;

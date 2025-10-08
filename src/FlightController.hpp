@@ -4,45 +4,43 @@
 
 #ifndef FLIGHTCONTROLLER_HPP
 #define FLIGHTCONTROLLER_HPP
+#include "FlightControllerState.hpp"
+#include "MavlinkHandler.hpp"
 #include "algo/Pid.hpp"
 #include "algo/KalmanFilter.hpp"
 #include "algo/KalmanFilter2D.hpp"
 #include "hardware/Rate.hpp"
-#include "hardware/receiver/ElrsReceiver.hpp"
 #include "hardware/motor/MotorManager.hpp"
 #include "hardware/mcu/Imu.hpp"
+#include "hardware/receiver/ElrsMavlinkReceiver.hpp"
 
-namespace algo {
-	typedef struct {
-		float roll;
-		float pitch;
-		float yaw;
-	} FCInput;
-
+namespace fc {
 class FlightController {
 public:
 	FlightController();
-	FCInput calculateMotorThrust(imu::ImuData &imuData, ControlState &controlState);
+	FCInput calculatePositionInSpace(imu::ImuData &imuData, ControlState &controlState);
 	void reset();
 	void runOnce();
 
 private:
-	KalmanFilter m_kalmanFilterRoll;
-	KalmanFilter m_kalmanFilterPitch;
-	KalmanFilter2d m_kamlanFilterVerticalVelAlt;
+	FlightControllerState m_state;
+	algo::KalmanFilter m_kalmanFilterRoll;
+	algo::KalmanFilter m_kalmanFilterPitch;
+	algo::KalmanFilter2d m_kamlanFilterVerticalVelAlt;
 
-	PID m_pidAngleRoll = PID({2,0,0});
-	PID m_pidAnglePitch = PID({2,0,0});
-	PID m_pidRatePitch = PID({0.40,3.5,0.025});
-	PID m_pidRateRoll = PID({0.40,3.5,0.025});
-	PID m_pidRateYaw = PID({2,12,0});
-	PID m_pidVerticalVelocity = PID({3.5,0.0015,0.01});
+	algo::PID m_pidAngleRoll = algo::PID({2,0,0});
+	algo::PID m_pidAnglePitch = algo::PID({2,0,0});
+	algo::PID m_pidRatePitch = algo::PID({0.40,3.5,0.025});
+	algo::PID m_pidRateRoll = algo::PID({0.40,3.5,0.025});
+	algo::PID m_pidRateYaw = algo::PID({2,12,0});
+	algo::PID m_pidVerticalåVelocity = algo::PID({3.5,0.0015,0.01});
 
-	ElrsReceiver			m_receiver;
-	motor::MotorManager		m_motorMgr;
-	imu::Imu				m_imuSensor;
-	uint32_t				m_loopTimer;
-	ControlState			m_rcControlInput;
+	ElrsMavlinkReceiver			m_receiver;
+	motor::MotorManager			m_motorMgr;
+	imu::Imu					m_imuSensor;
+	uint32_t					m_loopTimer;
+	ControlState				m_rcControlInput;
+	MavlinkHandler				m_mavlinkHandler;
 };
 
 } // algo

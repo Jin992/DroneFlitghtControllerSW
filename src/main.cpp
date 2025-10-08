@@ -2,12 +2,11 @@
 #include <memory>
 #include "FlightController.hpp"
 
-std::unique_ptr<algo::FlightController> flightController;
+std::unique_ptr<fc::FlightController> flightController;
 
 void setup() {
 	Serial.begin(115200);
-	flightController = std::make_unique<algo::FlightController>();
-
+	flightController = std::make_unique<fc::FlightController>();
 }
 
 void loop() {

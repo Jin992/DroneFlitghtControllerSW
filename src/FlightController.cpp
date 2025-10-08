@@ -4,10 +4,12 @@
 
 #include "FlightController.hpp"
 #include "hardware/Led.hpp"
+#include <cmath>
 
-namespace algo {
+namespace fc {
 	FlightController::FlightController()
-	: m_receiver(Serial4)
+	: m_state{.mode=MAV_MODE_MANUAL_DISARMED, .rate ={0,0,0}}
+	, m_receiver(Serial2)
 	, m_motorMgr(1,2,3,4)
 	, m_imuSensor(Wire)
 	, m_loopTimer{micros()}
@@ -20,8 +22,8 @@ namespace algo {
 		}
 	}
 
-	FCInput FlightController::calculateMotorThrust(imu::ImuData &imuData, ControlState &rcControlInput) {
 
+	FCInput FlightController::calculatePositionInSpace(imu::ImuData &imuData, ControlState &rcControlInput) {
 		// vertical velocity mode, experimentsl, not working now
 		//auto kalmanVerticalVelAltr = m_kamlanFilterVerticalVelAlt.calculate(imuData.altitudeCm, imuData.accel.verticalVelocity.accZInertial);
 		//const float errorVelocityVertical = 0.3 * (rcControlInput.throttle - 1500) - kalmanVerticalVelAltr.velocity;
@@ -54,22 +56,30 @@ namespace algo {
 		m_pidRateYaw.reset();
 	}
 
+
 	void FlightController::runOnce() {
-		auto imuData = m_imuSensor.measure();
+		std::vector<mavlink_message_t> response;
+
+		m_state.imuData = m_imuSensor.measure();
+
+		// Calculate attitude and quaternion before processing control
+
 		auto rxData = m_receiver.poll();
 		if (rxData) {
-			m_rcControlInput = ElrsReceiver::convertElrsReceiverDataToControlData(*rxData);
+			response = m_mavlinkHandler.handleRx(rxData.value(), m_state);
 		}
 
-		auto fcMotorInput = calculateMotorThrust(imuData, m_rcControlInput);
-		if (m_rcControlInput.arm == false) {
+		m_state.rate = calculatePositionInSpace(m_state.imuData, m_state.rcControl);
+		if (m_state.rcControl.arm == false) {
 			m_motorMgr.stopMotors();
 			reset();
 			Led::statusArm(false);
 		} else {
 			Led::statusArm(true);
-			m_motorMgr.adjustMotors(m_rcControlInput.throttle, fcMotorInput.roll, fcMotorInput.pitch, fcMotorInput.yaw);
+			m_motorMgr.adjustMotors(m_state.rcControl.throttle, m_state.rate.roll, m_state.rate.pitch, m_state.rate.yaw);
 		}
+		for (const auto&m: response)
+			m_receiver.send(m);
 
 		auto timeSpent = micros() - m_loopTimer;
 		//Serial.printf("Time spent %d\n", timeSpent);

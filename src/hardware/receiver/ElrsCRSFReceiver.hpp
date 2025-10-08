@@ -7,7 +7,6 @@
 #include <array>
 #include <HardwareSerial.h>
 #include <optional>
-#include <vector>
 
 #include "../Rate.hpp"
 
@@ -58,12 +57,12 @@ typedef struct {
 	ElrsReceiverRcChannelsData rcChannelsData;
 } ElrsReceiverData;
 
-class ElrsReceiver {
+class ElrsCRSFReceiver{
 public:
-	ElrsReceiver(HardwareSerialIMXRT &serial);
+	ElrsCRSFReceiver(HardwareSerialIMXRT &serial);
 
-	std::optional<ElrsReceiverData> poll(void);
-
+	std::optional<ElrsReceiverData> poll();
+	void send(const ElrsReceiverData &);
 	static ControlState convertElrsReceiverDataToControlData(ElrsReceiverData &rawData);
 
 private:
